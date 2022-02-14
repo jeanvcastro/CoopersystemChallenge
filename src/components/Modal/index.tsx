@@ -6,6 +6,7 @@ interface Props extends ModalProps {
   title: string;
   message: string;
   buttonText: string;
+  onPress: () => void;
 }
 
 const Modal = (props: Props) => {
@@ -15,7 +16,7 @@ const Modal = (props: Props) => {
         <ModalView>
           <Title>{props.title}</Title>
           <Message>{props.message}</Message>
-          <ModalButton>{props.buttonText}</ModalButton>
+          <ModalButton onPress={props.onPress}>{props.buttonText}</ModalButton>
         </ModalView>
       </Backdrop>
     </RNModal>
