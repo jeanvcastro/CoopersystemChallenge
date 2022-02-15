@@ -18,7 +18,7 @@ export function InvestmentDetail() {
   const [total, setTotal] = useState('');
   const [currentStockValues, setCurrentStockValues] = useState<{ [id: string]: number }>({});
   const [errors, setErrors] = useState<{ [id: string]: string }>({});
-  const [redemptionValue, setRedemptionValue] = useState('');
+  const [redemptionValue, setRedemptionValue] = useState('R$ 0,00');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalProps, setModalProps] = useState({});
 
@@ -40,7 +40,7 @@ export function InvestmentDetail() {
     if (errorList.length) {
       const modalPropsError = {
         title: 'Dados Inválidos',
-        message: `Você preencheu um ou mais campos com valor acima do permitido:\n\n ${errorList.join(
+        message: `Você preencheu um ou mais campos com valor acima do permitido:\n\n${errorList.join(
           '\n',
         )}`,
         buttonText: 'Corrigir',

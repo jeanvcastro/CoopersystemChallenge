@@ -63,7 +63,6 @@ export function Investments() {
       const investmentsData = parseInvestments(data.response.data.listaInvestimentos);
       setInvestments(investmentsData);
     } catch (e) {
-      console.log(e);
       Alert.alert('Erro ao listar investimentos!');
     } finally {
       setLoading(false);
