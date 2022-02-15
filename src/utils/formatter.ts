@@ -1,6 +1,13 @@
-export const currencyFormat = (text: string) => {
-  const number = text ? parseFloat(text.replace(/\D/g, '')) / 100 : 0;
-  return 'R$ ' + numberFormat(number);
+export const currencyFormat = (num: string | number) => {
+  if (typeof num === 'string') {
+    num = stringToFloat(num);
+  }
+  return 'R$ ' + numberFormat(num);
+};
+
+export const stringToFloat = (text: string) => {
+  const num = text !== '' ? parseFloat(text.replace(/\D/g, '')) : 0;
+  return parseFloat((num / 100).toFixed(2));
 };
 
 export const numberFormat = (

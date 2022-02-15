@@ -2,11 +2,18 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import InvestmentDetail from '../pages/InvestmentDetail';
-import Investment from '../pages/Investment';
+import Investments, { Investment } from '../pages/Investments';
 import theme from '../styles/theme';
 import { View } from 'react-native';
 
-const { Navigator, Screen } = createNativeStackNavigator();
+export type InvestmentParamList = {
+  Investimentos: undefined;
+  Resgate: {
+    investment: Investment;
+  };
+};
+
+const { Navigator, Screen } = createNativeStackNavigator<InvestmentParamList>();
 
 const InvestmentsRoutes = () => {
   return (
@@ -30,7 +37,7 @@ const InvestmentsRoutes = () => {
           fontWeight: 'bold',
         },
       }}>
-      <Screen name="Investimentos" component={Investment} />
+      <Screen name="Investimentos" component={Investments} />
       <Screen name="Resgate" component={InvestmentDetail} />
     </Navigator>
   );

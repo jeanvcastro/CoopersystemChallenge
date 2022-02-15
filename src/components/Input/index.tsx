@@ -1,39 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextInputProps, View } from 'react-native';
 import { currencyFormat } from '../../utils/formatter';
 import { HelperText, StyledInput } from './styles';
 
-interface Props extends TextInputProps {
+export interface InputProps extends TextInputProps {
   type: 'currency' | 'text';
   error: string;
 }
 
-const Input = (props: Props) => {
+const Input = (props: InputProps) => {
   const [text, setText] = useState(props.value);
-  const [focused, setFocused] = useState(false);
 
   const handleChangeText = (text: string) => {
-    setText(props.type === 'currency' ? currencyFormat(text) : text);
-  };
-
-  const handleFocus = () => {
-    setFocused(true);
-  };
-
-  const handleBlur = () => {
-    setFocused(false);
+    if (props.type === 'currency') text = currencyFormat(text);
+    setText(text);
+    if (props.onChangeText) props.onChangeText(text);
   };
 
   return (
     <View>
       <StyledInput
         onChangeText={handleChangeText}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
         keyboardType={props.type === 'currency' ? 'numeric' : 'default'}
         value={text}
       />
-      <HelperText>{props.error && !focused ? props.error : ''}</HelperText>
+      <HelperText>{props.error}</HelperText>
     </View>
   );
 };
