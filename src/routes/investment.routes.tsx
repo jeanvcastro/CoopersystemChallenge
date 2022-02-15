@@ -1,10 +1,9 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import InvestmentDetail from '../pages/InvestmentDetail';
-import Investments, { Investment } from '../pages/Investments';
-import theme from '../styles/theme';
 import { View } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Investment, Investments } from '../pages/Investments';
+import { InvestmentDetail } from '../pages/InvestmentDetail';
+import theme from '../styles/theme';
 
 export type InvestmentParamList = {
   Investimentos: undefined;

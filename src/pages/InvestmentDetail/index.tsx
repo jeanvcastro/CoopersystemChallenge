@@ -1,40 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
-import Modal from '../../components/Modal';
-import Card, { CardRow } from '../../components/Card';
 import { Container, Title } from './styles';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { InvestmentParamList } from '../../routes/investment.routes';
 import { Investment, Stock } from '../Investments';
 import { currencyFormat, stringToFloat } from '../../utils/formatter';
+import { Card, CardRow } from '../../components/Card';
+import { Input } from '../../components/Input';
+import { Button } from '../../components/Button';
+import { Modal } from '../../components/Modal';
 
-const modalPropsSuccess = {
-  title: 'Resgate Efetuado!',
-  message: 'O valor solicitado estará em sua conta em até 5 dias úteis!',
-  buttonText: 'Novo Resgate',
-  transparent: false,
-};
-
-const modalPropsError = {
-  title: 'Dados Inválidos',
-  message: `Você preencheu um ou mais campos com valor acima do permitido:\n\nBBAS3: Valor máximo de R$ 11.049,28\nVALE3: Valor máximo de R$ 8.143,44`,
-  buttonText: 'Corrigir',
-  transparent: true,
-};
-
-const InvestmentDetail = () => {
+export function InvestmentDetail() {
+  const navigation = useNavigation();
   const route = useRoute<RouteProp<InvestmentParamList>>();
-
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalProps, setModalProps] = useState(modalPropsSuccess);
 
   const [investment, setInvestment] = useState<Investment | undefined>(undefined);
   const [total, setTotal] = useState('');
   const [currentStockValues, setCurrentStockValues] = useState<{ [id: string]: number }>({});
   const [errors, setErrors] = useState<{ [id: string]: string }>({});
   const [redemptionValue, setRedemptionValue] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalProps, setModalProps] = useState({});
 
   useEffect(() => {
     if (route.params?.investment) {
@@ -48,12 +34,47 @@ const InvestmentDetail = () => {
     }
   }, []);
 
-  const handlePress = () => {
-    Math.random() < 0.5 ? setModalProps(modalPropsSuccess) : setModalProps(modalPropsError);
-    setModalVisible(!modalVisible);
-  };
+  function handlePress() {
+    validate();
+    const errorList = Object.values(errors);
+    if (errorList.length) {
+      const modalPropsError = {
+        title: 'Dados Inválidos',
+        message: `Você preencheu um ou mais campos com valor acima do permitido:\n\n ${errorList.join(
+          '\n',
+        )}`,
+        buttonText: 'Corrigir',
+        onPress: () => setModalVisible(false),
+      };
+      setModalProps(modalPropsError);
+    } else {
+      const modalPropsSuccess = {
+        title: 'Resgate Efetuado!',
+        message: 'O valor solicitado estará em sua conta em até 5 dias úteis!',
+        buttonText: 'Novo Resgate',
+        transparent: false,
+        onPress: () => {
+          setModalVisible(false);
+          navigation.goBack();
+        },
+      };
+      setModalProps(modalPropsSuccess);
+    }
+    setModalVisible(true);
+  }
 
-  const validate = () => {
+  function handleChangeText(text: string, stock: Stock) {
+    currentStockValues[stock.id] = stringToFloat(text);
+    setCurrentStockValues(currentStockValues);
+    setRedemptionValue(
+      currencyFormat(
+        Object.values(currentStockValues).reduce((previous, current) => previous + current, 0),
+      ),
+    );
+    validate();
+  }
+
+  function validate() {
     investment?.stocks.map(stock => {
       if (currentStockValues[stock.id]) {
         if (currentStockValues[stock.id] > stock.value) {
@@ -64,18 +85,7 @@ const InvestmentDetail = () => {
         setErrors(errors);
       }
     });
-  };
-
-  const handleChangeText = (text: string, stock: Stock) => {
-    currentStockValues[stock.id] = stringToFloat(text);
-    setCurrentStockValues(currentStockValues);
-    setRedemptionValue(
-      currencyFormat(
-        Object.values(currentStockValues).reduce((previous, current) => previous + current, 0),
-      ),
-    );
-    validate();
-  };
+  }
 
   return (
     <Container>
@@ -95,7 +105,11 @@ const InvestmentDetail = () => {
               value="R$ 0,00"
               type="currency"
               onChangeText={text => handleChangeText(text, stock)}
-              error={errors[stock.id]}
+              error={
+                errors[stock.id]
+                  ? `Valor não pode ser maior que ${currencyFormat(stock.value)}`
+                  : ''
+              }
             />
           </Card>
         ))}
@@ -104,9 +118,7 @@ const InvestmentDetail = () => {
         </Card>
       </ScrollView>
       <Button onPress={handlePress}>Confirmar Resgate</Button>
-      <Modal visible={modalVisible} onPress={() => setModalVisible(false)} {...modalProps} />
+      <Modal visible={modalVisible} {...modalProps} />
     </Container>
   );
-};
-
-export default InvestmentDetail;
+}

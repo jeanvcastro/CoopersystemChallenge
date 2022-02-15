@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { TextInputProps, View } from 'react-native';
 import { currencyFormat } from '../../utils/formatter';
 import { HelperText, StyledInput } from './styles';
 
-export interface InputProps extends TextInputProps {
+export type InputProps = TextInputProps & {
   type: 'currency' | 'text';
   error: string;
-}
+};
 
-const Input = (props: InputProps) => {
+export function Input(props: InputProps) {
   const [text, setText] = useState(props.value);
 
   const handleChangeText = (text: string) => {
@@ -27,11 +27,9 @@ const Input = (props: InputProps) => {
       <HelperText>{props.error}</HelperText>
     </View>
   );
-};
+}
 
 Input.defaultProps = {
   type: 'text',
   error: '',
 };
-
-export default Input;

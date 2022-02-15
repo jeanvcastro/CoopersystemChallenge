@@ -1,31 +1,29 @@
 import React from 'react';
-import { Modal as RNModal, ModalProps } from 'react-native';
+import { Modal as RNModal, ModalProps as RNModalProps } from 'react-native';
 import { Backdrop, Message, ModalView, ModalButton, Title } from './styles';
 
-interface Props extends ModalProps {
-  title: string;
-  message: string;
-  buttonText: string;
-  onPress: () => void;
-}
+type ModalProps = RNModalProps & {
+  title?: string;
+  message?: string;
+  buttonText?: string;
+  onPress?: () => void;
+};
 
-const Modal = (props: Props) => {
+export function Modal(props: ModalProps) {
   return (
     <RNModal {...props}>
       <Backdrop>
         <ModalView>
           <Title>{props.title}</Title>
           <Message>{props.message}</Message>
-          <ModalButton onPress={props.onPress}>{props.buttonText}</ModalButton>
+          <ModalButton onPress={props.onPress}>{props.buttonText || ''}</ModalButton>
         </ModalView>
       </Backdrop>
     </RNModal>
   );
-};
+}
 
 Modal.defaultProps = {
   animationType: 'fade',
   transparent: true,
 };
-
-export default Modal;

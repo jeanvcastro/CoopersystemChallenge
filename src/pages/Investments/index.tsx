@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -23,13 +23,21 @@ export type Investment = {
   stocks: Stock[];
 };
 
-const Investments = () => {
+export function Investments() {
   const navigation = useNavigation<NativeStackNavigationProp<InvestmentParamList>>();
 
   const [loading, setLoading] = useState(true);
   const [investments, setInvestments] = useState<Investment[]>([]);
 
-  const parseInvestments = (investments: any[]) => {
+  useEffect(() => {
+    fetchInvestments();
+  }, []);
+
+  function handlePress(investment: Investment) {
+    navigation.navigate('Resgate', { investment });
+  }
+
+  function parseInvestments(investments: any[]) {
     return investments.map((investment: any): Investment => {
       const stocks = investment.acoes.map((stock: any): Stock => {
         return {
@@ -47,13 +55,12 @@ const Investments = () => {
         stocks: stocks,
       };
     });
-  };
+  }
 
-  const fetchInvestments = async () => {
+  async function fetchInvestments() {
     try {
       const { data } = await api.get('/ca4ec77d-b941-4477-8a7f-95d4daf7a653');
       const investmentsData = parseInvestments(data.response.data.listaInvestimentos);
-
       setInvestments(investmentsData);
     } catch (e) {
       console.log(e);
@@ -61,15 +68,7 @@ const Investments = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchInvestments();
-  }, []);
-
-  const handlePress = (investment: Investment) => {
-    navigation.navigate('Resgate', { investment });
-  };
+  }
 
   return (
     <Container>
@@ -104,6 +103,4 @@ const Investments = () => {
       )}
     </Container>
   );
-};
-
-export default Investments;
+}

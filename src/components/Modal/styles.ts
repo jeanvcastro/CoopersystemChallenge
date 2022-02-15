@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import Button from '../Button';
+import { Button } from '../Button';
 
 export const Backdrop = styled.View`
   flex: 1;
