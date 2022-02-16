@@ -55,7 +55,10 @@ export function InvestmentDetail() {
         transparent: false,
         onPress: () => {
           setModalVisible(false);
-          navigation.goBack();
+          // hack to work on ios ¯\_(ツ)_/¯
+          setTimeout(() => {
+            navigation.goBack();
+          }, 0);
         },
       };
       setModalProps(modalPropsSuccess);
@@ -80,7 +83,7 @@ export function InvestmentDetail() {
         if (currentStockValues[stock.id] > stock.value) {
           errors[stock.id] = `${stock.name}: Valor máximo de ${currencyFormat(stock.value)}`;
         } else {
-          errors[stock.id] = '';
+          delete errors[stock.id];
         }
         setErrors(errors);
       }
